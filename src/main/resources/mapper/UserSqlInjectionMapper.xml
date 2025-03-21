@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.owasp.benchmark.annotated.mapper.UserSqlInjectionMapper">
+
+    <!-- 不安全查询：使用字符串拼接 -->
+    <select id="findUsersByNameUnsafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users WHERE username LIKE '%${username}%'
+    </select>
+
+    <!-- 安全查询：使用参数绑定 -->
+    <select id="findUsersByNameSafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users WHERE username LIKE '%'||#{username}||'%'
+    </select>
+
+    <!-- 不安全查询：ORDER BY子句中的注入 -->
+    <select id="findUsersSortedUnsafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users ORDER BY ${sortField}
+    </select>
+
+    <!-- 安全查询：ORDER BY子句白名单检查 -->
+    <select id="findUsersSortedSafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        <if test="sortField == 'username'">
+            SELECT * FROM users ORDER BY username
+        </if>
+        <if test="sortField == 'email'">
+            SELECT * FROM users ORDER BY email
+        </if>
+        <if test="sortField == 'id'">
+            SELECT * FROM users ORDER BY id
+        </if>
+        <if test="sortField != 'username' and sortField != 'email' and sortField != 'id'">
+            SELECT * FROM users ORDER BY id
+        </if>
+    </select>
+
+    <!-- 不安全查询：IN子句注入 -->
+    <select id="findUsersInListUnsafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users WHERE id IN (${idList})
+    </select>
+    
+    <!-- 安全查询：IN子句参数绑定 -->
+    <select id="findUsersInListSafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users WHERE id IN
+        <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    
+    <!-- 不安全查询：多条件查询 -->
+    <select id="findUsersByMultipleConditionsUnsafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users WHERE ${whereClause}
+    </select>
+    
+    <!-- 安全查询：动态多条件查询 -->
+    <select id="findUsersByMultipleConditionsSafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="username != null">
+                AND username LIKE '%'||#{username}||'%'
+            </if>
+            <if test="email != null">
+                AND email LIKE '%'||#{email}||'%'
+            </if>
+        </where>
+    </select>
+    
+    <!-- 不安全查询：LIMIT/OFFSET注入 -->
+    <select id="findUsersWithLimitUnsafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users LIMIT ${limit} OFFSET ${offset}
+    </select>
+    
+    <!-- 安全查询：LIMIT/OFFSET参数绑定 -->
+    <select id="findUsersWithLimitSafe" resultType="org.owasp.benchmark.annotated.entity.User">
+        SELECT * FROM users LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <!-- 不安全更新：字段拼接 -->
+    <update id="updateUserDynamicUnsafe">
+        UPDATE users SET ${setClause} WHERE id = #{id}
+    </update>
+    
+    <!-- 安全更新：动态更新 -->
+    <update id="updateUserDynamicSafe">
+        UPDATE users 
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="password != null">password = #{password}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 不安全删除：条件拼接 -->
+    <delete id="deleteUsersUnsafe">
+        DELETE FROM users WHERE ${condition}
+    </delete>
+    
+    <!-- 安全删除：参数绑定 -->
+    <delete id="deleteUsersSafe">
+        DELETE FROM users 
+        <where>
+            <if test="id != null">id = #{id}</if>
+        </where>
+    </delete>
+</mapper> 

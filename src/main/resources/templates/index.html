@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWASP Benchmark - 注解增强版</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        li:hover {
+            background-color: #e9ecef;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OWASP Benchmark - 注解增强版</h1>
+        <p>
+            这是基于OWASP Benchmark测试用例构建的注解增强版，用于评估静态分析工具对注解驱动代码的分析能力。
+            包含CWE-22（路径遍历）、CWE-89（SQL注入）和CWE-78（命令注入）、CWE-611（XML外部实体）和CWE-918（服务端请求伪造）五种漏洞类型。
+        </p>
+        
+        <h2>SQL注入 (CWE-89) 测试用例</h2>
+        <ul>
+            <li><a href="/annotated-benchmark/sqli/01?username=admin">测试用例1: MyBatis XML - LIKE查询 - 不安全实现</a></li>
+            <li><a href="/annotated-benchmark/sqli/02?sortField=username">测试用例2: MyBatis XML - ORDER BY子句 - 不安全实现</a></li>
+            <li><a href="/annotated-benchmark/sqli/03?idList=1,2,3">测试用例3: MyBatis XML - IN子句 - 不安全实现</a></li>
+            <li><a href="/annotated-benchmark/sqli/21?username=admin">测试用例21: MyBatis XML - LIKE查询 - 安全实现</a></li>
+            <li><a href="/annotated-benchmark/sqli/22?sortField=username">测试用例22: MyBatis XML - ORDER BY子句 - 安全实现</a></li>
+            <li><a href="/annotated-benchmark/sqli/23?idList=1,2,3">测试用例23: MyBatis XML - IN子句 - 安全实现</a></li>
+        </ul>
+        
+        <h2>命令注入 (CWE-78) 测试用例</h2>
+        <ul>
+            <li><a href="/annotated-benchmark/command/execute?command=ls">执行命令 - 不安全实现</a></li>
+            <li><a href="/annotated-benchmark/command/ping?host=localhost">Ping主机 - 不安全实现</a></li>
+        </ul>
+        
+        <h2>路径遍历 (CWE-22) 测试用例</h2>
+        <ul>
+            <li><a href="/annotated-benchmark/file/read?filename=test.txt">读取文件 - 不安全实现</a></li>
+            <li><a href="/annotated-benchmark/file/download?filename=test.txt">下载文件 - 不安全实现</a></li>
+        </ul>
+        
+        <h2>XML外部实体 (CWE-611) 测试用例</h2>
+        <ul>
+            <li><a href="/annotated-benchmark/xml/parse">解析XML - 不安全实现</a></li>
+            <li><a href="/annotated-benchmark/xml/parseSafe">解析XML - 安全实现</a></li>
+        </ul>
+        
+        <h2>服务端请求伪造 (CWE-918) 测试用例</h2>
+        <ul>
+            <li><a href="/annotated-benchmark/http/fetch?url=https://example.com">获取URL - 不安全实现</a></li>
+            <li><a href="/annotated-benchmark/http/fetchSafe?url=https://example.com">获取URL - 安全实现</a></li>
+        </ul>
+        
+        <div class="footer">
+            <p>© 2023 OWASP Benchmark - 注解增强版</p>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- 开启二级缓存 -->
+        <setting name="cacheEnabled" value="true"/>
+        <!-- 开启延迟加载 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 设置超时时间 -->
+        <setting name="defaultStatementTimeout" value="25"/>
+        <!-- 设置日志实现 -->
+        <setting name="logImpl" value="SLF4J"/>
+        <!-- 使用驼峰命名法转换 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    
+    <typeAliases>
+        <package name="org.owasp.benchmark.annotated.entity"/>
+    </typeAliases>
+    
+    <!-- 环境配置在Spring Boot的application.properties中定义 -->
+</configuration> 
