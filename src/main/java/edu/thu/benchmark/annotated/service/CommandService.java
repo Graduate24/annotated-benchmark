@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,8 @@ public class CommandService {
     // 参数验证的正则表达式
     @Value("${app.command.arg-pattern:[a-zA-Z0-9_\\-\\.]*}")
     private String argPattern;
+
+    private static final List<String> ALLOWED_COMMANDS = Arrays.asList("ls", "echo", "cat");
 
     /**
      * 不安全的命令执行方法
@@ -62,64 +65,43 @@ public class CommandService {
      * 安全的命令执行方法
      * 验证命令和参数，使用参数数组
      */
-    public String executeCommandSafe(String command, String... args) throws IOException {
-        // 验证命令是否在白名单中
-        if (!isCommandAllowed(command)) {
-            throw new IllegalArgumentException("不允许执行该命令: " + command);
-        }
-
-        // 验证参数
-        for (String arg : args) {
-            if (!isArgumentSafe(arg)) {
-                throw new IllegalArgumentException("参数包含不允许的字符: " + arg);
+    public String executeCommandSafe(String command) throws IOException {
+        try {
+            String[] parts = command.split("\\s+", 2);
+            
+            // 验证命令是否在白名单中
+            if (parts.length > 0 && ALLOWED_COMMANDS.contains(parts[0])) {
+                // 验证参数不包含危险字符
+                if (parts.length == 1 || !parts[1].matches(".*[;&|`\\\\\"'$].*")) {
+                    ProcessBuilder processBuilder = new ProcessBuilder();
+                    if (parts.length == 1) {
+                        processBuilder.command(parts[0]);
+                    } else {
+                        processBuilder.command(parts[0], parts[1]);
+                    }
+                    Process process = processBuilder.start();
+                    return readProcessOutput(process);
+                }
             }
+            
+            return "Command not allowed";
+        } catch (IOException e) {
+            return "Error: " + e.getMessage();
         }
-
-        // 构建命令数组
-        List<String> commandArray = new ArrayList<>();
-        commandArray.add(commandExecutor);
-        commandArray.add("-c");
-
-        // 构建完整命令字符串，但使用数组传入避免shell注入
-        StringBuilder commandStr = new StringBuilder(command);
-        for (String arg : args) {
-            commandStr.append(" ").append(arg);
-        }
-        commandArray.add(commandStr.toString());
-
-        // 执行命令
-        ProcessBuilder processBuilder = new ProcessBuilder(commandArray);
-        Process process = processBuilder.start();
-
-        // 读取命令输出
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        StringBuilder output = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            output.append(line).append("\n");
-        }
-
-        return output.toString();
     }
 
     /**
-     * 检查命令是否在白名单中
+     * 辅助方法：读取进程输出
      */
-    private boolean isCommandAllowed(String command) {
-        String[] allowedCommands = commandWhitelist.split(",");
-        for (String allowedCommand : allowedCommands) {
-            if (command.equals(allowedCommand.trim())) {
-                return true;
+    private String readProcessOutput(Process process) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
             }
+            return output.toString();
         }
-        return false;
-    }
-
-    /**
-     * 检查参数是否安全
-     */
-    private boolean isArgumentSafe(String arg) {
-        return Pattern.matches(argPattern, arg);
     }
 
     /**
