@@ -20,7 +20,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.owasp.benchmark" level="DEBUG" additivity="false">
+    <logger name="edu.thu.benchmark" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>
@@ -39,4 +39,4 @@
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </root>
-</configuration> 
+</configuration>

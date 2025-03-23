@@ -31,6 +31,13 @@ public class MyBatisSqlExtractor {
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            // 允许DTD处理但禁止外部实体解析和网络访问
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setXIncludeAware(false);
+            factory.setExpandEntityReferences(false);
+
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(xmlFile);
 
@@ -47,9 +54,6 @@ public class MyBatisSqlExtractor {
                     if (id != null && !id.isEmpty()) {
                         String methodPath = namespace + "." + id;
                         methodPaths.add(methodPath);
-
-                        // 输出SQL类型和方法路径
-                        System.out.println("SQL类型: " + sqlType + ", 方法路径: " + methodPath);
                     }
                 }
             }

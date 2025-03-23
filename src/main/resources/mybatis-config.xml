@@ -15,10 +15,10 @@
         <!-- 使用驼峰命名法转换 -->
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
-    
+
     <typeAliases>
-        <package name="org.owasp.benchmark.annotated.entity"/>
+        <package name="edu.thu.benchmark.annotated.entity"/>
     </typeAliases>
-    
+
     <!-- 环境配置在Spring Boot的application.properties中定义 -->
-</configuration> 
+</configuration>

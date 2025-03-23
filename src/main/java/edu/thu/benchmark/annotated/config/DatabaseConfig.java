@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  * 数据库配置类
  */
 @Configuration
-@MapperScan("org.owasp.benchmark.annotated.mapper")
+@MapperScan("edu.thu.benchmark.annotated.mapper")
 public class DatabaseConfig {
 
     /**

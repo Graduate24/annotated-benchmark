@@ -97,7 +97,7 @@ public class MyBatisCompiler {
      */
     public void saveToConstantsFile() {
         try (FileWriter writer = new FileWriter(outputDir + "/MyBatisMethodConstants.java")) {
-            writer.write("package org.owasp.benchmark.annotated.util;\n\n");
+            writer.write("package edu.thu.benchmark.annotated.util;\n\n");
             writer.write("/**\n");
             writer.write(" * MyBatis方法路径常量类\n");
             writer.write(" * 该类由工具自动生成，请勿手动修改\n");
@@ -151,7 +151,7 @@ public class MyBatisCompiler {
      */
     public void saveToExampleFile() {
         try (FileWriter writer = new FileWriter(outputDir + "/MyBatisCallExamples.java")) {
-            writer.write("package org.owasp.benchmark.annotated.util;\n\n");
+            writer.write("package edu.thu.benchmark.annotated.util;\n\n");
             writer.write("import org.springframework.beans.factory.annotation.Autowired;\n\n");
 
             for (String namespace : compiledMethods.keySet()) {
