@@ -1,0 +1,65 @@
+# 应用基本配置
+spring:
+  application:
+    name: annotated-benchmark
+  
+  # 数据源配置
+  datasource:
+    url: jdbc:h2:mem:benchmarkdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  
+  # H2控制台
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  # JPA配置
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# 服务器配置
+server:
+  port: 8080
+  servlet:
+    context-path: /annotated-benchmark
+
+# MyBatis配置
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: org.owasp.benchmark.annotated.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    org:
+      owasp:
+        benchmark: DEBUG
+      springframework: INFO
+      mybatis: INFO
+
+# 自定义属性(作为潜在的漏洞源)
+app:
+  upload:
+    directory: ${user.home}/uploads
+  command:
+    executor: /bin/bash
+  database:
+    query:
+      template: "SELECT * FROM users WHERE username = '%s'"
+  security:
+    enabled: true 

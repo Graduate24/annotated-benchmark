@@ -13,8 +13,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * 使用现代的Spring Boot启动方式
  */
 @SpringBootApplication
-@ComponentScan(basePackages = "org.owasp.benchmark.annotated")
-@EntityScan(basePackages = "org.owasp.benchmark.annotated.entity")
+@EntityScan(basePackages = "edu.thu.benchmark.annotated.entity")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class AnnotatedBenchmarkApplication extends SpringBootServletInitializer {
 
