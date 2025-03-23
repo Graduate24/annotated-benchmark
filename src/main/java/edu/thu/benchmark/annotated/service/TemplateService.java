@@ -17,9 +17,9 @@ import java.util.regex.Pattern;
 @Service
 public class TemplateService {
 
-    @Value("${template.dir:/tmp/templates}")
+    @Value("${template.dir}")
     private String templateDir;
-    
+
     // 安全白名单模式，只允许字母、数字、下划线和连字符以及.html扩展名
     private static final Pattern SAFE_TEMPLATE_PATTERN = Pattern.compile("[a-zA-Z0-9_-]+\\.html");
 
@@ -52,26 +52,26 @@ public class TemplateService {
         if (!SAFE_TEMPLATE_PATTERN.matcher(templateName).matches()) {
             throw new SecurityException("Invalid template name");
         }
-        
+
         try {
             Path basePath = Paths.get(templateDir).toAbsolutePath().normalize();
             Path templatePath = basePath.resolve(templateName).normalize();
-            
+
             // 验证模板路径是否在预期目录内
             if (!templatePath.startsWith(basePath)) {
                 throw new SecurityException("Access to the template is not allowed");
             }
-            
+
             if (!Files.isRegularFile(templatePath)) {
                 throw new IOException("Template not found");
             }
-            
+
             return new String(Files.readAllBytes(templatePath));
         } catch (IOException e) {
             return "Error loading template: " + e.getMessage();
         }
     }
-    
+
     /**
      * 不安全的多级模板获取实现
      * 允许用户指定子目录路径
@@ -88,7 +88,7 @@ public class TemplateService {
             return "Error loading template: " + e.getMessage();
         }
     }
-    
+
     /**
      * 安全的多级模板获取实现
      * 验证模板路径不包含路径遍历字符
@@ -101,23 +101,23 @@ public class TemplateService {
         if (templatePath.contains("..")) {
             throw new SecurityException("Invalid template path");
         }
-        
+
         try {
             Path basePath = Paths.get(templateDir).toAbsolutePath().normalize();
             Path templateFullPath = basePath.resolve(templatePath).normalize();
-            
+
             // 验证模板路径是否在预期目录内
             if (!templateFullPath.startsWith(basePath)) {
                 throw new SecurityException("Access to the template is not allowed");
             }
-            
+
             if (!Files.isRegularFile(templateFullPath)) {
                 throw new IOException("Template not found");
             }
-            
+
             return new String(Files.readAllBytes(templateFullPath));
         } catch (IOException e) {
             return "Error loading template: " + e.getMessage();
         }
     }
-} 
+}

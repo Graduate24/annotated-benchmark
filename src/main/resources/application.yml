@@ -1,65 +1,116 @@
-# 应用基本配置
+# 应用配置
 spring:
   application:
-    name: annotated-benchmark
-  
-  # 数据源配置
+    name: java-benchmark
   datasource:
-    url: jdbc:h2:mem:benchmarkdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
     username: sa
     password: password
-  
-  # H2控制台
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  
-  # JPA配置
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
-  
-  # 文件上传配置
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
 # 服务器配置
 server:
   port: 8080
   servlet:
-    context-path: /annotated-benchmark
+    context-path: /api
+  compression:
+    enabled: true
+  ssl:
+    enabled: false
 
-# MyBatis配置
-mybatis:
-  mapper-locations: classpath:mapper/**/*.xml
-  type-aliases-package: edu.thu.benchmark.annotated.entity
-  configuration:
-    map-underscore-to-camel-case: true
+# 命令执行配置
+command:
+  allowed:
+    prefix: ls,cat,echo,pwd,grep,find
+    arguments: -l,-a,-h,-t,-r,-n
+
+# 文件系统配置
+file:
+  upload:
+    dir: ./uploads
+    max-size: 10MB
+    allowed-extensions: jpg,png,pdf,txt,doc,docx
+  temp:
+    dir: ./temp
+  base:
+    dir: /tmp/files
+
+# SQL配置
+sql:
+  query:
+    limit: 100
+    timeout: 30000
+  allowed:
+    tables: users,products,orders,categories
+
+# 安全配置
+security:
+  allowed:
+    origins: localhost,127.0.0.1
+    methods: GET,POST,PUT,DELETE
+  authentication:
+    timeout: 3600
+    token-validity: 86400
 
 # 日志配置
 logging:
   level:
     root: INFO
-    org:
-      owasp:
-        benchmark: DEBUG
-      springframework: INFO
-      mybatis: INFO
+    edu.thu.benchmark: DEBUG
+  file:
+    path: ./logs
+    name: benchmark.log
 
-# 自定义属性(作为潜在的漏洞源)
+# 应用自定义配置
 app:
+  user:
+    default-role: USER
+  admin:
+    email: admin@example.com
+  features:
+    enable-caching: true
+    enable-metrics: true
   upload:
-    directory: ${user.home}/uploads
+    directory: /var/uploads
+    max-size: 10485760    # 10MB
+    allowed-extensions: .jpg,.jpeg,.png,.pdf,.docx
   command:
     executor: /bin/bash
+    whitelist: ls,dir,pwd,whoami,date,echo
+    arg-pattern: "[a-zA-Z0-9_\\-\\.]*"
   database:
     query:
-      template: "SELECT * FROM users WHERE username = '%s'"
+      template: "SELECT * FROM {table} WHERE {condition}"
   security:
-    enabled: true 
+    enabled: true
+  timeout: 30000
+  max-connections: 100
+
+# ZIP配置
+zip:
+  extract:
+    dir: /tmp/extracts
+
+# 模板配置
+template:
+  dir: /tmp/templates
+
+# 日志目录
+log:
+  dir: /tmp/logs
+
+env:
+  user-home: ${user.home}
+
+aspect:
+  file-access:
+    log-dir: /tmp/logs/file-access 

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/command")
 public class CommandInjectionController {
 
-    @Value("${command.allowed.prefix:ls,cat,echo}")
+    @Value("${command.allowed.prefix}")
     private String allowedCommandPrefix;
 
     @Autowired

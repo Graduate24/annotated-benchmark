@@ -26,11 +26,11 @@ public class FileUploadService {
     private String uploadDirectory;
 
     // 设置最大文件大小，带默认值
-    @Value("${app.upload.max-size:10485760}") // 默认10MB
+    @Value("${app.upload.max-size}") // 默认10MB
     private long maxFileSize;
 
     // 允许的文件类型
-    @Value("${app.upload.allowed-extensions:.jpg,.jpeg,.png,.pdf,.docx}")
+    @Value("${app.upload.allowed-extensions}")
     private String allowedExtensions;
 
     /**

@@ -26,11 +26,11 @@ public class CommandService {
     private String commandExecutor;
 
     // 允许执行的命令白名单
-    @Value("${app.command.whitelist:ls,dir,pwd,whoami,date,echo}")
+    @Value("${app.command.whitelist}")
     private String commandWhitelist;
 
     // 参数验证的正则表达式
-    @Value("${app.command.arg-pattern:[a-zA-Z0-9_\\-\\.]*}")
+    @Value("${app.command.arg-pattern}")
     private String argPattern;
 
     private static final List<String> ALLOWED_COMMANDS = Arrays.asList("ls", "echo", "cat");
@@ -68,7 +68,7 @@ public class CommandService {
     public String executeCommandSafe(String command) throws IOException {
         try {
             String[] parts = command.split("\\s+", 2);
-            
+
             // 验证命令是否在白名单中
             if (parts.length > 0 && ALLOWED_COMMANDS.contains(parts[0])) {
                 // 验证参数不包含危险字符
@@ -83,7 +83,7 @@ public class CommandService {
                     return readProcessOutput(process);
                 }
             }
-            
+
             return "Command not allowed";
         } catch (IOException e) {
             return "Error: " + e.getMessage();

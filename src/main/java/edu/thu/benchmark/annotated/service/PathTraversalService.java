@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 @Service
 public class PathTraversalService {
 
-    @Value("${file.base.dir:/tmp/files}")
+    @Value("${file.base.dir}")
     private String baseDir;
 
     /**
@@ -58,23 +58,23 @@ public class PathTraversalService {
             // 安全：规范化路径并验证
             Path basePath = Paths.get(baseDir).toAbsolutePath().normalize();
             Path resolvedPath = basePath.resolve(filePath).normalize();
-            
+
             // 验证最终路径是否在允许的目录内
             if (!resolvedPath.startsWith(basePath)) {
                 throw new SecurityException("Access to the file is not allowed");
             }
-            
+
             if (!Files.isRegularFile(resolvedPath)) {
                 throw new IOException("File not found or not a regular file");
             }
-            
+
             content.append(new String(Files.readAllBytes(resolvedPath)));
         } catch (Exception e) {
             content.append("Error reading file: ").append(e.getMessage());
         }
         return content.toString();
     }
-    
+
     /**
      * 不安全的目录列表实现
      * 未验证用户提供的目录路径
@@ -87,7 +87,7 @@ public class PathTraversalService {
         File dir = new File(baseDir + "/" + dirPath);
         return dir.list();
     }
-    
+
     /**
      * 安全的目录列表实现
      * 验证用户提供的目录路径
@@ -100,16 +100,16 @@ public class PathTraversalService {
             // 安全：规范化路径并验证
             Path basePath = Paths.get(baseDir).toAbsolutePath().normalize();
             Path resolvedPath = basePath.resolve(dirPath).normalize();
-            
+
             // 验证最终路径是否在允许的目录内
             if (!resolvedPath.startsWith(basePath)) {
                 throw new SecurityException("Access to the directory is not allowed");
             }
-            
+
             if (!Files.isDirectory(resolvedPath)) {
                 throw new IOException("Directory not found");
             }
-            
+
             return Files.list(resolvedPath)
                     .map(path -> path.getFileName().toString())
                     .toArray(String[]::new);
@@ -117,4 +117,4 @@ public class PathTraversalService {
             return new String[]{"Error listing directory: " + e.getMessage()};
         }
     }
-} 
+}

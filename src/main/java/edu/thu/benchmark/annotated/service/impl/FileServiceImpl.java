@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class FileServiceImpl implements FileService {
 
-    @Value("${file.upload.dir:./uploads}")
+    @Value("${file.upload.dir}")
     private String uploadDir;
 
     private final Path rootLocation;

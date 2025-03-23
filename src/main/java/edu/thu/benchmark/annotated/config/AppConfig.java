@@ -43,10 +43,10 @@ public class AppConfig {
     private boolean securityEnabled;
 
     // 可以设置默认值的配置项
-    @Value("${app.timeout:30000}")
+    @Value("${app.timeout}")
     private int timeout;
 
-    @Value("${app.max-connections:100}")
+    @Value("${app.max-connections}")
     private int maxConnections;
 
     // 获取系统属性

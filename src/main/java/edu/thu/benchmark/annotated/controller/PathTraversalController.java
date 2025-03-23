@@ -38,21 +38,15 @@ import java.util.UUID;
 @RequestMapping("/path")
 public class PathTraversalController {
 
-    @Value("${file.base.dir:/tmp/files}")
+    @Value("${file.base.dir}")
     private String baseDir;
-    
+
     @Autowired
     private PathTraversalService pathTraversalService;
-    
+
     @Autowired
     private TemplateService templateService;
-    
-    @Autowired
-    private ZipService zipService;
-    
-    @Autowired
-    private ResourceLoader resourceLoader;
-    
+
     @Autowired
     private FileAccessAspect fileAccessAspect;
 
@@ -259,16 +253,16 @@ public class PathTraversalController {
         // 安全：规范化路径并验证
         Path basePath = Paths.get(baseDir).toAbsolutePath().normalize();
         Path filePath = basePath.resolve(filename).normalize();
-        
+
         // 验证最终路径是否在允许的目录内
         if (!filePath.startsWith(basePath)) {
             throw new SecurityException("Access to the file is not allowed");
         }
-        
+
         if (!Files.exists(filePath)) {
             throw new FileNotFoundException("File not found");
         }
-        
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filePath.getFileName() + "\"")
                 .body(new FileSystemResource(filePath.toFile()));
@@ -283,17 +277,17 @@ public class PathTraversalController {
         if (imageName.contains("..") || imageName.contains("/") || imageName.contains("\\")) {
             throw new SecurityException("Invalid image name");
         }
-        
+
         // 进一步验证：只允许特定扩展名
-        if (!imageName.toLowerCase().endsWith(".jpg") && 
-            !imageName.toLowerCase().endsWith(".png") && 
+        if (!imageName.toLowerCase().endsWith(".jpg") &&
+            !imageName.toLowerCase().endsWith(".png") &&
             !imageName.toLowerCase().endsWith(".gif")) {
             throw new SecurityException("Invalid image type");
         }
-        
+
         Path basePath = Paths.get(baseDir, "images").toAbsolutePath().normalize();
         Path imagePath = basePath.resolve(imageName).normalize();
-        
+
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(new FileSystemResource(imagePath.toFile()));
@@ -307,16 +301,16 @@ public class PathTraversalController {
         // 安全：规范化路径并验证
         Path basePath = Paths.get(baseDir).toAbsolutePath().normalize();
         Path resolvedPath = basePath.resolve(filePath).normalize();
-        
+
         // 验证最终路径是否在允许的目录内
         if (!resolvedPath.startsWith(basePath)) {
             throw new SecurityException("Access to the file is not allowed");
         }
-        
+
         if (!Files.exists(resolvedPath)) {
             throw new FileNotFoundException("File not found");
         }
-        
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resolvedPath.getFileName() + "\"")
                 .body(new FileSystemResource(resolvedPath.toFile()));
@@ -330,16 +324,16 @@ public class PathTraversalController {
         // 安全：规范化路径并验证
         Path basePath = Paths.get(baseDir).toAbsolutePath().normalize();
         Path resolvedPath = basePath.resolve(filePath).normalize();
-        
+
         // 验证最终路径是否在允许的目录内
         if (!resolvedPath.startsWith(basePath)) {
             throw new SecurityException("Access to the file is not allowed");
         }
-        
+
         if (!Files.isRegularFile(resolvedPath)) {
             throw new FileNotFoundException("File not found or not a regular file");
         }
-        
+
         return new String(Files.readAllBytes(resolvedPath));
     }
 
@@ -360,18 +354,18 @@ public class PathTraversalController {
         if (xmlFile.contains("..") || xmlFile.contains("/") || xmlFile.contains("\\")) {
             throw new SecurityException("Invalid XML file name");
         }
-        
+
         if (!xmlFile.toLowerCase().endsWith(".xml")) {
             throw new SecurityException("File must be an XML file");
         }
-        
+
         Path basePath = Paths.get(baseDir, "config").toAbsolutePath().normalize();
         Path xmlPath = basePath.resolve(xmlFile).normalize();
-        
+
         if (!xmlPath.startsWith(basePath)) {
             throw new SecurityException("Access to the XML file is not allowed");
         }
-        
+
         return new String(Files.readAllBytes(xmlPath));
     }
 
@@ -384,11 +378,11 @@ public class PathTraversalController {
         if (logFile.contains("..") || logFile.contains("/") || logFile.contains("\\")) {
             throw new SecurityException("Invalid log file name");
         }
-        
+
         if (!logFile.toLowerCase().endsWith(".log")) {
             throw new SecurityException("File must be a log file");
         }
-        
+
         // 使用安全的切面实现
         return fileAccessAspect.accessLogFileSafe(logFile);
     }
@@ -402,18 +396,18 @@ public class PathTraversalController {
         if (configFile.contains("..") || configFile.contains("/") || configFile.contains("\\")) {
             throw new SecurityException("Invalid config file name");
         }
-        
+
         if (!configFile.toLowerCase().endsWith(".properties") && !configFile.toLowerCase().endsWith(".xml")) {
             throw new SecurityException("Invalid config file type");
         }
-        
+
         Path basePath = Paths.get(baseDir, "config").toAbsolutePath().normalize();
         Path configPath = basePath.resolve(configFile).normalize();
-        
+
         if (!configPath.startsWith(basePath)) {
             throw new SecurityException("Access to the config file is not allowed");
         }
-        
+
         Properties props = new Properties();
         try (FileInputStream fis = new FileInputStream(configPath.toFile())) {
             props.load(fis);
@@ -430,7 +424,7 @@ public class PathTraversalController {
         if (!propFile.endsWith(".properties")) {
             throw new SecurityException("File must be a properties file");
         }
-        
+
         ClassPathResource resource = new ClassPathResource("config/" + propFile);
         Properties props = new Properties();
         try (InputStream is = resource.getInputStream()) {
@@ -448,9 +442,9 @@ public class PathTraversalController {
         if (!template.matches("[a-zA-Z0-9_-]+\\.html")) {
             throw new SecurityException("Invalid template name");
         }
-        
+
         return templateService.getTemplateSafe(template); // 安全：在Service中验证模板路径
     }
 
     // 其他安全实现的测试用例省略...
-} 
+}
