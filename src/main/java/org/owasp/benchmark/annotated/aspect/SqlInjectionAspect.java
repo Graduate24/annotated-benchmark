@@ -35,7 +35,7 @@ public class SqlInjectionAspect {
     /**
      * 在方法执行前执行不安全的SQL注入操作
      */
-    @Before("execution(* org.owasp.benchmark.annotated.service.SqlInjectionTestService.findUsersByAspectSafe(..))")
+    @Before("sqlInjectionServiceMethods()")
     @Vulnerability(
             cwe = 89,
             type = VulnerabilityType.SQL_INJECTION,
@@ -55,7 +55,7 @@ public class SqlInjectionAspect {
     /**
      * 在方法执行后执行安全的SQL查询操作
      */
-    @After("execution(* org.owasp.benchmark.annotated.service.SqlInjectionTestService.findUsersByAspectSafe(..))")
+    @After("sqlInjectionServiceMethods()")
     public void afterSafeSqlExecution(JoinPoint joinPoint, String username) {
         // 安全的SQL查询示例
         if (joinPoint.getSignature().getName().contains("Safe")) {
@@ -70,7 +70,7 @@ public class SqlInjectionAspect {
     /**
      * 针对findUsersByAspectUnsafe方法的特定切面
      */
-    @Before("execution(* org.owasp.benchmark.annotated.service.SqlInjectionTestService.findUsersByAspectUnsafe(..))")
+    @Before("sqlInjectionServiceMethods()")
     @Vulnerability(
             cwe = 89,
             type = VulnerabilityType.SQL_INJECTION,
@@ -87,7 +87,7 @@ public class SqlInjectionAspect {
     /**
      * 针对findUsersByAspectSafe方法的特定切面
      */
-    @Before("execution(* org.owasp.benchmark.annotated.service.SqlInjectionTestService.findUsersByAspectSafe(..))")
+    @Before("sqlInjectionServiceMethods()")
     public List<Map<String, Object>> executeSafeSql(JoinPoint joinPoint, String username) {
         // 执行安全的SQL查询
         String safeSql = "SELECT * FROM users WHERE username LIKE CONCAT('%', ?, '%')";
