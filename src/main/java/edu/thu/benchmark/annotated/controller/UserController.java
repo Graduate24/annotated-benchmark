@@ -5,6 +5,7 @@ import edu.thu.benchmark.annotated.annotation.VulnerabilityLevel;
 import edu.thu.benchmark.annotated.annotation.VulnerabilityType;
 import edu.thu.benchmark.annotated.entity.User;
 import edu.thu.benchmark.annotated.service.UserService;
+import edu.thu.benchmark.annotated.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,8 +25,8 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    // 原注解: @Autowired
+    private UserService userService = new UserServiceImpl();
 
     /**
      * 查询所有用户

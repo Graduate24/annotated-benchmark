@@ -20,8 +20,8 @@ import java.nio.file.Paths;
 @Component
 public class FileAccessAspect {
 
-    @Value("${log.dir}")
-    private String logDir;
+    // 原注解: @Value("${log.dir}")
+    private String logDir = "/tmp/logs";
 
     /**
      * 不安全的日志文件访问实现

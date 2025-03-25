@@ -22,16 +22,16 @@ import java.util.regex.Pattern;
 public class CommandService {
 
     // 直接从配置文件中获取命令执行器
-    @Value("${app.command.executor}")
-    private String commandExecutor;
+    // 原注解: @Value("${app.command.executor}")
+    private String commandExecutor = "/bin/bash";
 
     // 允许执行的命令白名单
-    @Value("${app.command.whitelist}")
-    private String commandWhitelist;
+    // 原注解: @Value("${app.command.whitelist}")
+    private String commandWhitelist = "ls,dir,pwd,whoami,date,echo";
 
     // 参数验证的正则表达式
-    @Value("${app.command.arg-pattern}")
-    private String argPattern;
+    // 原注解: @Value("${app.command.arg-pattern}")
+    private String argPattern = "[a-zA-Z0-9_\\-\\.]*";
 
     private static final List<String> ALLOWED_COMMANDS = Arrays.asList("ls", "echo", "cat");
 

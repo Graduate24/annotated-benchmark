@@ -26,14 +26,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/command")
 public class CommandInjectionController {
 
-    @Value("${command.allowed.prefix}")
-    private String allowedCommandPrefix;
+    // 原注解: @Value("${command.allowed.prefix}")
+    private String allowedCommandPrefix = "ls,cat,echo,pwd,grep,find";
 
-    @Autowired
-    private CommandService commandService;
+    // 原注解: @Autowired
+    private CommandService commandService = new CommandService();
 
-    @Autowired
-    private CommandExecutionAspect commandExecutionAspect;
+    // 原注解: @Autowired
+    private CommandExecutionAspect commandExecutionAspect = new CommandExecutionAspect();
 
     // ======== 测试用例 - 正例（存在命令注入漏洞） ========
 

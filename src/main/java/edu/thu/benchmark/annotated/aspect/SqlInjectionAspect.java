@@ -23,8 +23,8 @@ import java.util.Map;
 @Component
 public class SqlInjectionAspect {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    // 原注解: @Autowired
+    private JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
     /**
      * 定义切入点：所有使用CustomSqlExecution注解的方法

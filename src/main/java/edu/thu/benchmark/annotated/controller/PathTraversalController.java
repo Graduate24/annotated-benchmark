@@ -38,17 +38,17 @@ import java.util.UUID;
 @RequestMapping("/path")
 public class PathTraversalController {
 
-    @Value("${file.base.dir}")
-    private String baseDir;
+    // 原注解: @Value("${file.base.dir}")
+    private String baseDir = "/tmp/files";
 
-    @Autowired
-    private PathTraversalService pathTraversalService;
+    // 原注解: @Autowired
+    private PathTraversalService pathTraversalService = new PathTraversalService();
 
-    @Autowired
-    private TemplateService templateService;
+    // 原注解: @Autowired
+    private TemplateService templateService = new TemplateService();
 
-    @Autowired
-    private FileAccessAspect fileAccessAspect;
+    // 原注解: @Autowired
+    private FileAccessAspect fileAccessAspect = new FileAccessAspect();
 
     // ======== 测试用例 - 正例（存在路径遍历漏洞） ========
 

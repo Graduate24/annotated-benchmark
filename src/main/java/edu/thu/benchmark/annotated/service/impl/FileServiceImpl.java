@@ -26,14 +26,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class FileServiceImpl implements FileService {
 
-    @Value("${file.upload.dir}")
-    private String uploadDir;
+    // 原注解: @Value("${file.upload.dir}")
+    private String uploadDir = "./uploads";
 
     private final Path rootLocation;
     private final List<FileInfo> fileInfoList = new ArrayList<>();
     private final AtomicInteger fileIdCounter = new AtomicInteger(1);
 
-    public FileServiceImpl(@Value("${file.upload.dir:./uploads}") String uploadDir) {
+    public FileServiceImpl(String uploadDir) {
         this.uploadDir = uploadDir;
         this.rootLocation = Paths.get(uploadDir);
     }

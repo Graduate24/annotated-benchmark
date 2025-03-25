@@ -22,13 +22,12 @@ import java.util.Map;
 @RequestMapping("/sqli")
 public class SqlInjectionTestController {
 
-    @Autowired
-    private SqlInjectionTestService sqlInjectionTestService;
+    // 原注解: @Autowired
+    private SqlInjectionTestService sqlInjectionTestService = new SqlInjectionTestService();
     // TODO 如果不还原语义,那么sql注入将无法检测,因为sqlInjectionTestService被认为是null
-    // private SqlInjectionTestService sqlInjectionTestService = new SqlInjectionTestService();
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    // 原注解: @Autowired
+    private JdbcTemplate jdbcTemplate = new JdbcTemplate();
     // ======== 测试用例 - 正例（存在SQL注入漏洞） ========
 
     /**

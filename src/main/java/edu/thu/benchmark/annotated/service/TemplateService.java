@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 @Service
 public class TemplateService {
 
-    @Value("${template.dir}")
-    private String templateDir;
+    // 原注解: @Value("${template.dir}")
+    private String templateDir = "/tmp/templates";
 
     // 安全白名单模式，只允许字母、数字、下划线和连字符以及.html扩展名
     private static final Pattern SAFE_TEMPLATE_PATTERN = Pattern.compile("[a-zA-Z0-9_-]+\\.html");

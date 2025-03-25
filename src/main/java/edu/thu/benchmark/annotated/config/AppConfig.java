@@ -13,45 +13,45 @@ import org.springframework.stereotype.Component;
 public class AppConfig {
 
     // 应用基本配置
-    @Value("${spring.application.name}")
-    private String applicationName;
+    // 原注解: @Value("${spring.application.name}")
+    private String applicationName = "java-benchmark";
 
-    @Value("${server.port}")
-    private int serverPort;
+    // 原注解: @Value("${server.port}")
+    private int serverPort = 8080;
 
     // 数据源配置
-    @Value("${spring.datasource.url}")
-    private String datasourceUrl;
+    // 原注解: @Value("${spring.datasource.url}")
+    private String datasourceUrl = "jdbc:h2:mem:testdb";
 
-    @Value("${spring.datasource.username}")
-    private String datasourceUsername;
+    // 原注解: @Value("${spring.datasource.username}")
+    private String datasourceUsername = "sa";
 
-    @Value("${spring.datasource.password}")
-    private String datasourcePassword;
+    // 原注解: @Value("${spring.datasource.password}")
+    private String datasourcePassword = "password";
 
     // 自定义属性
-    @Value("${app.upload.directory}")
-    private String uploadDirectory;
+    // 原注解: @Value("${app.upload.directory}")
+    private String uploadDirectory = "/var/uploads";
 
-    @Value("${app.command.executor}")
-    private String commandExecutor;
+    // 原注解: @Value("${app.command.executor}")
+    private String commandExecutor = "/bin/bash";
 
-    @Value("${app.database.query.template}")
-    private String queryTemplate;
+    // 原注解: @Value("${app.database.query.template}")
+    private String queryTemplate = "SELECT * FROM {table} WHERE {condition}";
 
-    @Value("${app.security.enabled}")
-    private boolean securityEnabled;
+    // 原注解: @Value("${app.security.enabled}")
+    private boolean securityEnabled = true;
 
     // 可以设置默认值的配置项
-    @Value("${app.timeout}")
-    private int timeout;
+    // 原注解: @Value("${app.timeout}")
+    private int timeout = 30000;
 
-    @Value("${app.max-connections}")
-    private int maxConnections;
+    // 原注解: @Value("${app.max-connections}")
+    private int maxConnections = 100;
 
     // 获取系统属性
-    @Value("${user.home}")
-    private String userHome;
+    // 原注解: @Value("${user.home}")
+    private String userHome = System.getProperty("user.home");
 
     /**
      * 获取应用名称

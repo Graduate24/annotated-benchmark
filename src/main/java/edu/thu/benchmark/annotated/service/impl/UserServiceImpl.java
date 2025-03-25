@@ -14,6 +14,8 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
+    // 原注解: @Autowired
+    // 注意：userMapper是Mybatis的接口，不能直接实例化，保留原样
     @Autowired
     private UserMapper userMapper;
 

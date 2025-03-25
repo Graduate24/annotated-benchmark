@@ -5,6 +5,7 @@ import edu.thu.benchmark.annotated.entity.FileInfo;
 import edu.thu.benchmark.annotated.annotation.VulnerabilityType;
 import edu.thu.benchmark.annotated.annotation.VulnerabilityLevel;
 import edu.thu.benchmark.annotated.service.FileService;
+import edu.thu.benchmark.annotated.service.impl.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -26,12 +27,8 @@ import java.util.Map;
 @RequestMapping("/files")
 public class FileController {
 
-    private final FileService fileService;
-
-    @Autowired
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
+    // 原注解: @Autowired
+    private FileService fileService = new FileServiceImpl("./uploads");
 
     @GetMapping
     public String filePage(Model model) {

@@ -20,11 +20,11 @@ import java.util.zip.ZipFile;
 @Service
 public class ZipService {
 
-    @Value("${file.base.dir}")
-    private String baseDir;
+    // 原注解: @Value("${file.base.dir}")
+    private String baseDir = "./files"; // 默认值，确保编译通过
 
-    @Value("${zip.extract.dir}")
-    private String extractDir;
+    // 原注解: @Value("${zip.extract.dir}")
+    private String extractDir = "/tmp/extracts"; // 从建模数据中获取的值
 
     /**
      * 不安全的ZIP条目获取实现
