@@ -61,8 +61,8 @@ public class SqlInjectionAspect {
         // 安全的SQL查询示例
 
         // 使用参数化查询
-        String safeSql = "SELECT * FROM users WHERE username = ?";
-        List<Map<String, Object>> result = jdbcTemplate.queryForList(safeSql, "ran");
+        String safeSql = "SELECT * FROM users WHERE username = ran";
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(safeSql);
         // 记录安全的SQL查询操作
         System.out.println("执行安全的SQL查询：参数化查询");
 
@@ -79,11 +79,11 @@ public class SqlInjectionAspect {
             remediation = "使用参数化查询替代字符串拼接",
             level = VulnerabilityLevel.CRITICAL
     )
-    public List<Map<String, Object>> executeUnsafeSql() {
+    public List<Map<String, Object>> executeUnsafeSql(String name) {
         // 直接执行不安全的SQL查询
         String username = "1; delete from users where id = 1";
         String unsafeSql = "SELECT * FROM users WHERE username LIKE '%" + username + "%'";
-        return jdbcTemplate.queryForList(unsafeSql);
+        return jdbcTemplate.queryForList(name);
     }
 
     /**

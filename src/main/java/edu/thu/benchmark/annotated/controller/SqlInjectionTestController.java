@@ -6,6 +6,7 @@ import edu.thu.benchmark.annotated.annotation.VulnerabilityType;
 import edu.thu.benchmark.annotated.entity.User;
 import edu.thu.benchmark.annotated.service.SqlInjectionTestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -23,7 +24,11 @@ public class SqlInjectionTestController {
 
     @Autowired
     private SqlInjectionTestService sqlInjectionTestService;
+    // TODO 如果不还原语义,那么sql注入将无法检测,因为sqlInjectionTestService被认为是null
+    // private SqlInjectionTestService sqlInjectionTestService = new SqlInjectionTestService();
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     // ======== 测试用例 - 正例（存在SQL注入漏洞） ========
 
     /**
@@ -38,9 +43,11 @@ public class SqlInjectionTestController {
             level = VulnerabilityLevel.HIGH,
             isRealVulnerability = true
     )
-    public List<User> testCase01(@RequestParam String username) {
-        return sqlInjectionTestService.findUsersByNameUnsafe(username);
+    public List<Map<String,Object>> testCase01(@RequestParam String username) {
+        return sqlInjectionTestService.findUsersByJdbcUnsafe(username);
     }
+
+
 
     /**
      * 测试用例2：使用MyBatis XML - ORDER BY子句 - 不安全实现

@@ -1,96 +1,101 @@
-# Java漏洞基准测试框架
+# Java语义还原研究计划
 
-这个项目提供了一个带注释的Java应用程序基准测试框架，用于评估静态分析工具（特别是SpotBugs）对常见Web安全漏洞的检测能力。
+## 项目概述
 
-## 支持的漏洞类型
+本项目旨在研究如何使用大型语言模型（LLM）对带有框架特性（如注解、依赖注入等）的Java代码进行语义还原，将其转换为纯Java代码，使静态分析工具能够更准确地分析安全漏洞。
 
-该框架包含以下CWE（Common Weakness Enumeration）漏洞类型的测试用例：
+## 语义还原的核心理念
 
-- **CWE-22**: 路径遍历 - 10个正例（易受攻击）和10个反例（安全实现）
-- **CWE-78**: 操作系统命令注入 - 10个正例和10个反例
-- **CWE-89**: SQL注入 - 21个正例和21个反例
+语义还原不是指完全等价地实现注解或框架的功能，而是在静态分析层面，通过简化、抽象、补全等手段，使得代码语义基本一致，确保静态分析工具的能力不受限。主要遵循以下原则：
 
-## 使用方法
+1. **保证从无到有，适当简化**：填补框架自动完成的代码，但不需要复杂实现
+2. **保持静态分析重要路径**：确保数据流和控制流不因简化而丢失
+3. **重点关注安全漏洞分析相关的代码**：优先还原可能影响安全分析结果的部分
 
-### 运行基准测试应用程序
+## 还原重点
 
-```bash
-# 编译项目并运行SpotBugs检查
-mvn clean compile spotbugs:check
+### 依赖注入（DI）还原
+- 将`@Autowired`注解的字段通过`new`关键字进行初始化
+- 为被注入类的构造函数添加必要的参数
+- 处理循环依赖的特殊情况
 
-# 运行SpotBugs并启动GUI界面查看结果
-mvn spotbugs:spotbugs spotbugs:gui
+### 配置值注入还原
+- 将`@Value`注解引用的配置直接赋值给对应字段
+- 处理表达式（如`${property}`）和默认值
+- 支持多种配置源（YAML、Properties）
 
-# 导出SpotBugs结果为XML格式
-mvn spotbugs:spotbugs -Dspotbugs.outputFile=spotbugs_results.xml
-```
+### AOP（面向切面编程）还原
+- 识别切面和通知（Advice）
+- 在目标方法中插入对应的通知代码
+- 处理不同类型的通知（前置、后置、环绕等）
 
-### 评估SpotBugs检测能力
+### MyBatis等ORM框架还原
+- 为`@Mapper`接口生成简单实现类
+- 提供基本SQL查询实现
+- 保留查询中可能存在的漏洞点
 
-本项目提供了多种工具来评估SpotBugs的漏洞检测能力：
+## 技术方案
 
-1. **XML解析工具** - 将SpotBugs XML结果转换为JSON格式：
-   ```bash
-   python3 parse_spotbugs_xml.py -i spotbugs_results.xml -o spotbugs_results.json
-   ```
-   
-2. **基本评估工具** - 对比SpotBugs检测结果与真实情况：
-   ```bash
-   python3 evaluate_spotbugs.py
-   ```
+### 建模分析
+1. 使用静态分析工具提取项目结构和元数据
+2. 识别框架特性（注解、依赖关系等）
+3. 生成项目建模报告（JSON格式）
 
-3. **增强版评估工具** - 支持调用链上的漏洞匹配：
-   ```bash
-   # 生成调用图
-   python3 generate_call_graph.py --with-manual
-   
-   # 使用调用链进行评估
-   python3 evaluate_spotbugs_enhanced.py --with-call-graph
-   
-   # 运行完整的比较测试
-   python3 test_call_graph_analysis.py
-   ```
+### 语义还原
+1. 基于建模报告识别需要还原的组件
+2. 利用大模型（如GPT-4）生成等效的纯Java代码
+3. 处理特殊情况和异常
 
-请参阅以下文档获取详细使用指南：
-- [完整使用指南](USAGE_GUIDE.md) - 从头到尾的详细操作步骤
-- [SpotBugs解析工具说明](README_spotbugs_parser.md) - XML解析工具详细说明
-- [SpotBugs评估工具说明](README_evaluation.md) - 基本评估脚本详细说明
-- [增强版评估工具说明](README_enhanced_evaluation.md) - 支持调用链的评估工具说明
-- [评估结果示例](evaluation_summary.md) - 评估报告示例
+### 代码生成与验证
+1. 生成可编译的Java代码
+2. 验证还原代码的静态分析结果
+3. 比较原始代码和还原代码的安全漏洞检测效果
 
-## 真实情况表（Truth Tables）
+## 评估指标
 
-项目包含详细的真实情况表，记录了每种漏洞类型的所有测试用例：
-
-- 路径遍历: `truth_tables/path_traversal_cwe22.csv`
-- 命令注入: `truth_tables/command_injection_cwe78.csv`
-- SQL注入: `truth_tables/sql_injection_cwe89.csv`
+1. **代码完整性**：还原代码是否可以成功编译
+2. **语义保真度**：原始代码与还原代码的静态分析结果一致性
+3. **漏洞检测率**：还原前后对已知漏洞的检测成功率对比
+4. **性能效率**：还原过程的时间和资源消耗
 
 ## 项目结构
 
 ```
-.
-├── src/ - Java源代码，包含漏洞测试案例
-├── truth_tables/ - 漏洞真实情况表（CSV格式）
-├── evaluate_spotbugs.py - 基本评估脚本
-├── evaluate_spotbugs_enhanced.py - 增强版评估脚本（支持调用链）
-├── generate_call_graph.py - 调用图生成工具
-├── parse_spotbugs_xml.py - 解析SpotBugs XML结果的脚本
-├── test_call_graph_analysis.py - 调用链分析测试脚本
-├── example_spotbugs_results.json - 示例SpotBugs结果文件
-├── evaluation_summary.md - 评估结果示例报告
-├── USAGE_GUIDE.md - 完整使用指南
-└── README_enhanced_evaluation.md - 增强版评估工具说明
+semantic-restoration/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── modeling/           # 代码建模相关
+│   │   │   ├── restoration/        # 语义还原核心
+│   │   │   ├── llm/                # LLM接口和提示词
+│   │   │   └── utils/              # 工具类
+│   │   └── resources/
+│   └── test/
+├── data/
+│   ├── models/                     # 建模结果
+│   └── restored/                   # 还原结果
+├── docs/                           # 文档
+└── scripts/                        # 辅助脚本
 ```
 
-## 调用链分析
+## 研究计划里程碑
 
-本框架的亮点功能是支持调用链分析的漏洞评估，解决了传统评估方法的局限性：
+1. **阶段一：建模工具开发**
+   - 实现Java项目结构分析
+   - 实现框架特性识别（注解、依赖关系）
+   - 生成标准化建模报告
 
-- **问题**：传统评估只考虑直接匹配的方法，而SpotBugs通常在调用链的不同位置检测漏洞
-- **解决方案**：通过构建调用图，在评估时考虑整个调用链上的漏洞
-- **优势**：更准确地评估静态分析工具的真实性能，减少假阳性和假阴性的统计偏差
+2. **阶段二：LLM还原引擎设计**
+   - 设计还原策略和算法
+   - 实现LLM接口和提示词模板
+   - 开发代码生成与验证框架
 
-## 贡献
+3. **阶段三：评估与优化**
+   - 对典型项目进行还原测试
+   - 评估还原效果
+   - 优化还原策略和算法
 
-欢迎提交Pull Request以添加更多漏洞类型或改进现有测试用例。
+4. **阶段四：拓展与应用**
+   - 支持更多Java框架和库
+   - 与静态分析工具集成
+   - 开发自动化工作流
